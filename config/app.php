@@ -167,7 +167,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Spatie\JsonApiPaginate\JsonApiPaginateServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
-        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+env('APP_ENV') !== 'production' ? Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class : null,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         /*
          * Application Service Providers...
