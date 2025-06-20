@@ -14,13 +14,16 @@ WORKDIR /var/www
 # Copy Laravel app (everything from current folder)
 COPY . /var/www
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader --verbose
-
-# Set permissions for storage and cache
+# Set permissions early (some scripts need write access)
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+# 🐛 Install dependencies without running post-scripts (for debugging)
+RUN composer install --no-dev --optimize-autoloader --no-scripts || true
+
+# ⛔ REMOVE this line if the issue is inside post-scripts
+# RUN php artisan optimize || true
 
 EXPOSE 8000
 
-# Start Laravel app
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Start a shell for debugging — you can exec into the container
+CMD ["/bin/bash"]
