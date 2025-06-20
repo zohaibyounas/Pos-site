@@ -11,17 +11,16 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy app code
+# Copy all files
 COPY . .
 
-# Set permissions
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Set permissions early
+RUN mkdir -p storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
 
-# Install PHP dependencies
-RUN composer install --optimize-autoloader --no-dev
+# 🚨 Skip post-scripts for now, allow build to continue
+RUN composer install --no-dev --optimize-autoloader --no-scripts || true
 
-# Expose port
-EXPOSE 8080
-
-# Start PHP-FPM server
-CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
+# Open shell so we can debug
+CMD ["/bin/bash"]
