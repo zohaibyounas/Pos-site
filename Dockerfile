@@ -19,13 +19,13 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# Set working directory to Laravel project inside 'pos'
 WORKDIR /var/www
 
-# Copy existing application directory
-COPY . /var/www
+# Copy Laravel app from the 'pos' subdirectory of your repo
+COPY pos/ /var/www
 
-# Install dependencies
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions
@@ -33,4 +33,5 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 8000
 
+# Start Laravel server
 CMD php artisan serve --host=0.0.0.0 --port=8000
