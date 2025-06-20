@@ -9,13 +9,12 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-public function register(): void
-{
-    if ($this->app->environment() !== 'production' && class_exists(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class)) {
-        $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+    public function register(): void
+    {
+        if ($this->app->environment() !== 'production') {
+            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+        }
     }
-}
-
 
     /**
      * Bootstrap any application services.
