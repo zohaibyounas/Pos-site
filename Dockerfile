@@ -1,4 +1,4 @@
-FROM php:8.2-cli
+FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -8,22 +8,20 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory inside container
+# Set working directory
 WORKDIR /var/www
 
-# Copy Laravel app (everything from current folder)
-COPY . /var/www
+# Copy app code
+COPY . .
 
-# Set permissions early (some scripts need write access)
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# Set permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# 🐛 Install dependencies without running post-scripts (for debugging)
-RUN composer install --no-dev --optimize-autoloader --no-scripts || true
+# Install PHP dependencies
+RUN composer install --optimize-autoloader --no-dev
 
-# ⛔ REMOVE this line if the issue is inside post-scripts
-# RUN php artisan optimize || true
+# Expose port
+EXPOSE 8080
 
-EXPOSE 8000
-
-# Start a shell for debugging — you can exec into the container
-CMD ["/bin/bash"]
+# Start PHP-FPM server
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
