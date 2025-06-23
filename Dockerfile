@@ -12,25 +12,20 @@ RUN docker-php-ext-install zip
 RUN docker-php-ext-install bcmath
 RUN docker-php-ext-install intl
 
+
 # Enable Apache rewrite module
 RUN a2enmod rewrite
-
-# Enable .htaccess override
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
-
-# Set DocumentRoot to Laravel's public directory
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www/public
 
 # Copy project files
 COPY . .
 
-# Copy env file if not already handled by CI/CD
+# Copy env file if not already handled by your CI/CD
 COPY .env.example .env
 
 # Set permissions for Laravel
@@ -41,12 +36,12 @@ RUN mkdir -p storage bootstrap/cache \
 # Increase Composer memory limit and install dependencies
 ENV COMPOSER_MEMORY_LIMIT=-1
 
-# Install dependencies (fallback to log on failure)
+# Use safer install command with fallback logs
 RUN composer install --no-dev --optimize-autoloader --no-scripts -vvv \
     || (echo "Composer failed. Checking Laravel log..." && cat storage/logs/laravel.log || true)
 
-# Expose the default Apache port
+# Expose the port Render expects (Apache default is 80, but use 8080 if Render is configured for it)
 EXPOSE 80
 
-# Start Apache
+# Start Apache in foreground
 CMD ["apache2-foreground"]
