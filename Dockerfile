@@ -1,9 +1,19 @@
 FROM php:8.2-apache
 
 # Install system dependencies
+# Step 1: Install dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip zip curl libzip-dev libpng-dev libxml2-dev libicu-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip bcmath tokenizer intl
+    git unzip zip curl libzip-dev libpng-dev libxml2-dev libicu-dev
+
+# Step 2: Install PHP extensions separately
+RUN docker-php-ext-install pdo
+RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install mbstring
+RUN docker-php-ext-install zip
+RUN docker-php-ext-install bcmath
+RUN docker-php-ext-install tokenizer
+RUN docker-php-ext-install intl
+
 
 # Enable Apache rewrite module
 RUN a2enmod rewrite
