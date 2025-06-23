@@ -1,11 +1,10 @@
 FROM php:8.2-apache
 
 # Install system dependencies
-# Step 1: Install dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip zip curl libzip-dev libpng-dev libxml2-dev libicu-dev
+    git unzip zip curl libzip-dev libpng-dev libxml2-dev libicu-dev libonig-dev
 
-# Step 2: Install PHP extensions separately
+# Install PHP extensions separately
 RUN docker-php-ext-install pdo
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mbstring
