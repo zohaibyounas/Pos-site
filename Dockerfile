@@ -2,8 +2,9 @@ FROM php:8.2-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip zip curl libzip-dev libpng-dev libonig-dev libxml2-dev \
+    git unzip zip curl libzip-dev libpng-dev libxml2-dev \
     && docker-php-ext-install pdo pdo_mysql mbstring zip bcmath tokenizer intl
+
 
 RUN a2enmod rewrite
 
