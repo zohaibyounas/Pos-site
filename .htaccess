@@ -4,7 +4,7 @@
     </IfModule>
 
     RewriteEngine On
-
+#kkk
     # Handle Authorization MemberHeader
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
